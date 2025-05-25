@@ -347,6 +347,16 @@ namespace robolina
     protected:
         static const size_t c_invalid_token_id = static_cast<size_t>(-1);
 
+        static char_type to_lower(char_type c)
+        {
+            return static_cast<char_type>(std::tolower(static_cast<unsigned char>(c)));
+        }
+
+        static char_type to_upper(char_type c)
+        {
+            return static_cast<char_type>(std::toupper(static_cast<unsigned char>(c)));
+        }
+
         std::vector<std::basic_string<char_type>> split_text(const char_type* text) const
         {
             std::vector<std::basic_string<char_type>> words;
@@ -414,19 +424,19 @@ namespace robolina
                 if (first_word)
                 {
                     // First word starts with lowercase
-                    result += std::tolower(static_cast<unsigned char>(word[0]));
+                    result +=to_lower(word[0]);
                     first_word = false;
                 }
                 else
                 {
                     // Subsequent words start with uppercase
-                    result += std::toupper(static_cast<unsigned char>(word[0]));
+                    result += to_upper(word[0]);
                 }
 
                 // Rest of the word in lowercase
                 for (size_t i = 1; i < word.size(); ++i)
                 {
-                    result += std::tolower(static_cast<unsigned char>(word[i]));
+                    result +=to_lower(word[i]);
                 }
             }
             return result;
@@ -443,12 +453,12 @@ namespace robolina
                 }
 
                 // Every word starts with uppercase
-                result += std::toupper(static_cast<unsigned char>(word[0]));
+                result += to_upper(word[0]);
 
                 // Rest of the word in lowercase
                 for (size_t i = 1; i < word.size(); ++i)
                 {
-                    result += std::tolower(static_cast<unsigned char>(word[i]));
+                    result +=to_lower(word[i]);
                 }
             }
             return result;
@@ -461,7 +471,7 @@ namespace robolina
             {
                 for (const auto& c : word)
                 {
-                    result += std::tolower(static_cast<unsigned char>(c));
+                    result +=to_lower(c);
                 }
             }
             return result;
@@ -474,7 +484,7 @@ namespace robolina
             {
                 for (const auto& c : word)
                 {
-                    result += std::toupper(static_cast<unsigned char>(c));
+                    result += to_upper(c);
                 }
             }
             return result;
@@ -501,11 +511,11 @@ namespace robolina
                 {
                     if (uppercase)
                     {
-                        result += std::toupper(static_cast<unsigned char>(c));
+                        result += to_upper(c);
                     }
                     else
                     {
-                        result += std::tolower(static_cast<unsigned char>(c));
+                        result +=to_lower(c);
                     }
                 }
             }
@@ -543,11 +553,11 @@ namespace robolina
                 {
                     if (uppercase)
                     {
-                        result += std::toupper(static_cast<unsigned char>(c));
+                        result += to_upper(c);
                     }
                     else
                     {
-                        result += std::tolower(static_cast<unsigned char>(c));
+                        result +=to_lower(c);
                     }
                 }
             }

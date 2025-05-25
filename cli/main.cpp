@@ -116,7 +116,7 @@ CommandLineOptions parseCommandLine(int argc, char* argv[]) {
 
 bool shouldProcessFile(const fs::path& path) {
     // Skip binary files, hidden files, etc.
-    std::string extension = path.extension().string();
+    std::string file_extension = path.extension().string();
 
     // List of text file extensions to process
     static const std::vector<std::string> textExtensions = {
@@ -125,7 +125,7 @@ bool shouldProcessFile(const fs::path& path) {
         ".cmake", ".rst", ".tex", ".vndf", ".epdf", ".qml", ".qrc"
     };
 
-    return std::find(textExtensions.begin(), textExtensions.end(), extension) != textExtensions.end();
+    return std::find(textExtensions.cbegin(), textExtensions.cend(), file_extension) != textExtensions.cend();
 }
 
 // Add function to perform find and replace on filenames
