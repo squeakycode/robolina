@@ -9,7 +9,8 @@
 
 namespace fs = std::filesystem;
 
-struct CommandLineOptions {
+struct CommandLineOptions
+{
     std::vector<fs::path> paths;
     std::string textToFind;
     std::string replacementText;
@@ -20,7 +21,8 @@ struct CommandLineOptions {
     bool dryRun = false;
 };
 
-void printUsage() {
+void printUsage()
+{
     std::cout << "Robolina - Text replacement tool with case preservation\n\n"
               << "Usage: robolina [options] <path> <text-to-find> <replacement-text>\n\n"
               << "Options:\n"
@@ -35,55 +37,88 @@ void printUsage() {
               << "  robolina --match-whole-word --recursive . \"findMe\" \"replaceWithThis\"\n";
 }
 
-CommandLineOptions parseCommandLine(int argc, char* argv[]) {
+CommandLineOptions parseCommandLine(int argc, char* argv[])
+{
     CommandLineOptions options;
 
-    if (argc < 4) {
+    if (argc < 4)
+    {
         printUsage();
         throw std::runtime_error("Not enough arguments");
     }
 
     int currentArg = 1;
     int positionalIndex = 0;
-    while (currentArg < argc) {
+    while (currentArg < argc)
+    {
         std::string arg = argv[currentArg];
 
-        if (arg == "--help" || arg == "-h") {
+        if (arg == "--help" || arg == "-h")
+        {
             printUsage();
             exit(0);
-        } else if (arg == "--match-whole-word") {
+        }
+        else if (arg == "--match-whole-word")
+        {
             options.matchWholeWord = true;
-        } else if (arg == "--recursive" || arg == "-r") {
+        }
+        else if (arg == "--recursive" || arg == "-r")
+        {
             options.recursive = true;
-        } else if (arg == "--verbose" || arg == "-v") {
+        }
+        else if (arg == "--verbose" || arg == "-v")
+        {
             options.verbose = true;
-        } else if (arg == "--dry-run") {
+        }
+        else if (arg == "--dry-run")
+        {
             options.dryRun = true;
-        } else if (arg == "--case-mode") {
-            if (currentArg + 1 >= argc) {
+        }
+        else if (arg == "--case-mode")
+        {
+            if (currentArg + 1 >= argc)
+            {
                 throw std::runtime_error("Missing value for --case-mode");
             }
             std::string modeValue = argv[++currentArg];
-            if (modeValue == "preserve") {
+            if (modeValue == "preserve")
+            {
                 options.caseMode = robolina::case_mode::preserve_case;
-            } else if (modeValue == "ignore") {
+            }
+            else if (modeValue == "ignore")
+            {
                 options.caseMode = robolina::case_mode::ignore_case;
-            } else if (modeValue == "match") {
+            }
+            else if (modeValue == "match")
+            {
                 options.caseMode = robolina::case_mode::match_case;
-            } else {
+            }
+            else
+            {
                 throw std::runtime_error("Invalid case mode: " + modeValue);
             }
-        } else if (arg[0] == '-') {
+        }
+        else if (arg[0] == '-')
+        {
             throw std::runtime_error("Unknown option: " + arg);
-        } else {
+        }
+        else
+        {
             // Use positionalIndex to determine which positional argument this is
-            if (positionalIndex == 0) {
+            if (positionalIndex == 0)
+            {
                 options.paths.push_back(arg);
-            } else if (positionalIndex == 1) {
+            }
+            else if (positionalIndex == 1)
+            {
                 options.textToFind = arg;
-            } else if (positionalIndex == 2) {
+            }
+            else if (positionalIndex == 2)
+            {
                 options.replacementText = arg;
-            } else {
+            }
+            else
+            {
                 throw std::runtime_error("Too many positional arguments");
             }
             positionalIndex++;
@@ -91,14 +126,16 @@ CommandLineOptions parseCommandLine(int argc, char* argv[]) {
         currentArg++;
     }
 
-    if (positionalIndex < 3) {
+    if (positionalIndex < 3)
+    {
         throw std::runtime_error("Missing required positional arguments");
     }
 
     return options;
 }
 
-bool shouldProcessFile(const fs::path& path) {
+bool shouldProcessFile(const fs::path& path)
+{
     // Skip binary files, hidden files, etc.
     std::string file_extension = path.extension().string();
 
@@ -125,7 +162,8 @@ bool shouldProcessFile(const fs::path& path) {
 }
 
 // Add function to perform find and replace on filenames
-fs::path renameFileWithReplacement(const fs::path& originalPath, const CommandLineOptions& options) {
+fs::path renameFileWithReplacement(const fs::path& originalPath, const CommandLineOptions& options)
+{
     // Get the parent path and filename
     fs::path parentPath = originalPath.parent_path();
     std::string filename = originalPath.filename().string();
@@ -145,7 +183,8 @@ fs::path renameFileWithReplacement(const fs::path& originalPath, const CommandLi
     std::string newStemName = replacer.find_and_replace(stemName);
 
     // If the stem name didn't change, return the original path
-    if (stemName == newStemName) {
+    if (stemName == newStemName)
+    {
         return originalPath;
     }
 
@@ -156,14 +195,17 @@ fs::path renameFileWithReplacement(const fs::path& originalPath, const CommandLi
     return newPath;
 }
 
-void processFile(const fs::path& path, const CommandLineOptions& options) {
-    if (!fs::is_regular_file(path) || !shouldProcessFile(path)) {
+void processFile(const fs::path& path, const CommandLineOptions& options)
+{
+    if (!fs::is_regular_file(path) || !shouldProcessFile(path))
+    {
         return;
     }
 
     // Read file contents
     std::ifstream file(path, std::ios::binary);
-    if (!file) {
+    if (!file)
+    {
         std::cerr << "Error: Could not open file " << path << std::endl;
         return;
     }
@@ -190,12 +232,14 @@ void processFile(const fs::path& path, const CommandLineOptions& options) {
     std::vector<char> newContent;
 
     // Define a vector sink adapter
-    struct vector_sink {
+    struct vector_sink
+    {
         std::vector<char>& result;
 
         vector_sink(std::vector<char>& target) : result(target) {}
 
-        void write(const char* begin, const char* end) {
+        void write(const char* begin, const char* end)
+        {
             result.insert(result.end(), begin, end);
         }
     };
@@ -213,27 +257,35 @@ void processFile(const fs::path& path, const CommandLineOptions& options) {
     fs::path newPath = renameFileWithReplacement(path, options);
     needsRename = (newPath != path);
 
-    if (hasChanges || needsRename) {
-        if (options.verbose) {
-            if (hasChanges) {
+    if (hasChanges || needsRename)
+    {
+        if (options.verbose)
+        {
+            if (hasChanges)
+            {
                 std::cout << "Changes found in file content: " << path << std::endl;
             }
-            if (needsRename) {
+            if (needsRename)
+            {
                 std::cout << "File will be renamed: " << path << " -> " << newPath.filename() << std::endl;
             }
         }
 
-        if (!options.dryRun) {
-            if (hasChanges) {
+        if (!options.dryRun)
+        {
+            if (hasChanges)
+            {
                 // If the path is different and the file already exists, we need to handle it
-                if (needsRename && fs::exists(newPath)) {
+                if (needsRename && fs::exists(newPath))
+                {
                     std::cerr << "Error: Cannot rename file, destination already exists: " << newPath << std::endl;
                     return;
                 }
 
                 // Write the content
                 std::ofstream outFile(path, std::ios::binary);
-                if (!outFile) {
+                if (!outFile)
+                {
                     std::cerr << "Error: Could not write to file " << path << std::endl;
                     return;
                 }
@@ -245,67 +297,97 @@ void processFile(const fs::path& path, const CommandLineOptions& options) {
             }
 
             // If we need to rename but there were no content changes, we need to explicitly rename the file
-            if (needsRename && !hasChanges) {
-                try {
-                    if (fs::exists(newPath)) {
+            if (needsRename && !hasChanges)
+            {
+                try
+                {
+                    if (fs::exists(newPath))
+                    {
                         std::cerr << "Error: Cannot rename file, destination already exists: " << newPath << std::endl;
                         return;
                     }
                     fs::rename(path, newPath);
-                } catch (const fs::filesystem_error& e) {
+                }
+                catch (const fs::filesystem_error& e)
+                {
                     std::cerr << "Error: Failed to rename file: " << e.what() << std::endl;
                     return;
                 }
             }
 
-            if (options.verbose) {
-                if (hasChanges) {
+            if (options.verbose)
+            {
+                if (hasChanges)
+                {
                     std::cout << "Updated file content" << std::endl;
                 }
-                if (needsRename) {
+                if (needsRename)
+                {
                     std::cout << "Renamed file to: " << newPath.filename() << std::endl;
                 }
             }
-        } else if (options.verbose) {
+        }
+        else if (options.verbose)
+        {
             std::cout << "Dry run - no changes made" << std::endl;
         }
-    } else if (options.verbose) {
+    }
+    else if (options.verbose)
+    {
         std::cout << "No changes needed for file: " << path << std::endl;
     }
 }
 
-void processPath(const fs::path& path, const CommandLineOptions& options) {
-    if (fs::is_regular_file(path)) {
+void processPath(const fs::path& path, const CommandLineOptions& options)
+{
+    if (fs::is_regular_file(path))
+    {
         processFile(path, options);
-    } else if (fs::is_directory(path)) {
-        if (options.recursive) {
-            for (const auto& entry : fs::recursive_directory_iterator(path)) {
-                if (fs::is_regular_file(entry)) {
-                    processFile(entry.path(), options);
-                }
-            }
-        } else {
-            for (const auto& entry : fs::directory_iterator(path)) {
-                if (fs::is_regular_file(entry)) {
+    }
+    else if (fs::is_directory(path))
+    {
+        if (options.recursive)
+        {
+            for (const auto& entry : fs::recursive_directory_iterator(path))
+            {
+                if (fs::is_regular_file(entry))
+                {
                     processFile(entry.path(), options);
                 }
             }
         }
-    } else {
+        else
+        {
+            for (const auto& entry : fs::directory_iterator(path))
+            {
+                if (fs::is_regular_file(entry))
+                {
+                    processFile(entry.path(), options);
+                }
+            }
+        }
+    }
+    else
+    {
         std::cerr << "Warning: Path is neither a file nor a directory: " << path << std::endl;
     }
 }
 
-int main(int argc, char* argv[]) {
-    try {
+int main(int argc, char* argv[])
+{
+    try
+    {
         CommandLineOptions options = parseCommandLine(argc, argv);
 
-        for (const auto& path : options.paths) {
+        for (const auto& path : options.paths)
+        {
             processPath(path, options);
         }
 
         return 0;
-    } catch (const std::exception& e) {
+    }
+    catch (const std::exception& e)
+    {
         std::cerr << "Error: " << e.what() << std::endl;
         return 1;
     }
