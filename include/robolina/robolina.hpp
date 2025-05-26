@@ -359,12 +359,12 @@ namespace robolina
 
         static char_type to_lower(wchar_t c)
         {
-            return static_cast<char_type>(std::tolower(static_cast<uint16_t>(c)));
+            return static_cast<char_type>(std::tolower(c));
         }
 
         static char_type to_upper(wchar_t c)
         {
-            return static_cast<char_type>(std::toupper(static_cast<uint16_t>(c)));
+            return static_cast<char_type>(std::toupper(c));
         }
 
         std::vector<std::basic_string<char_type>> split_text(const char_type* text) const
