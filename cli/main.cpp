@@ -19,6 +19,7 @@ struct CommandLineOptions
     bool recursive = false;
     bool verbose = false;
     bool dryRun = false;
+    bool allowRename = true; // New option to control file renaming
 };
 
 void printUsage()
@@ -31,6 +32,7 @@ void printUsage()
               << "  --recursive, -r       Process directories recursively\n"
               << "  --verbose, -v         Print detailed information during processing\n"
               << "  --dry-run             Show what would be replaced without making changes\n"
+              << "  --no-rename           Do not rename files, only replace content\n"
               << "  --help, -h            Display this help message\n\n"
               << "Examples:\n"
               << "  robolina src/ \"old_name\" \"new_name\" --case-mode preserve\n"
@@ -97,6 +99,10 @@ CommandLineOptions parseCommandLine(int argc, char* argv[])
             {
                 throw std::runtime_error("Invalid case mode: " + modeValue);
             }
+        }
+        else if (arg == "--no-rename")
+        {
+            options.allowRename = false;
         }
         else if (arg[0] == '-')
         {
@@ -217,6 +223,11 @@ void processFile(const fs::path& path, const CommandLineOptions& options)
     // Create a vector one character larger for the null terminator
     std::vector<char> content(size + 1, '\0');
     file.read(content.data(), size);
+    if (!file)
+    {
+        std::cerr << "Error: Failed to read file " << path << std::endl;
+        return;
+    }
     file.close();
 
     // Create replacer and add the replacement rule
@@ -255,7 +266,7 @@ void processFile(const fs::path& path, const CommandLineOptions& options)
     // Flag to track if we need to perform a file rename
     bool needsRename = false;
     fs::path newPath = renameFileWithReplacement(path, options);
-    needsRename = (newPath != path);
+    needsRename = (newPath != path) && options.allowRename;
 
     if (hasChanges || needsRename)
     {
@@ -293,7 +304,10 @@ void processFile(const fs::path& path, const CommandLineOptions& options)
                 outFile.write(newContent.data(), newContent.size());
                 outFile.close();
 
-                fs::rename(path, newPath);
+                if (needsRename)
+                {
+                    fs::rename(path, newPath);
+                }
             }
 
             // If we need to rename but there were no content changes, we need to explicitly rename the file
