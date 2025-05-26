@@ -24,19 +24,19 @@ struct CommandLineOptions
 
 void printUsage()
 {
-    std::cout << "Robolina - Text replacement tool with case preservation\n\n"
-              << "Usage: robolina [options] <path> <text-to-find> <replacement-text>\n\n"
-              << "Options:\n"
-              << "  --case-mode <mode>    Set case mode (preserve, ignore, match). Default: preserve\n"
-              << "  --match-whole-word    Only replace whole words\n"
-              << "  --recursive, -r       Process directories recursively\n"
-              << "  --verbose, -v         Print detailed information during processing\n"
-              << "  --dry-run             Show what would be replaced without making changes\n"
-              << "  --no-rename           Do not rename files, only replace content\n"
-              << "  --help, -h            Display this help message\n\n"
-              << "Examples:\n"
-              << "  robolina src/ \"old_name\" \"new_name\" --case-mode preserve\n"
-              << "  robolina --match-whole-word --recursive . \"findMe\" \"replaceWithThis\"\n";
+    std::cout << "Robolina - Text replacement tool with case preservation" << std::endl << std::endl
+              << "Usage: robolina [options] <path> <text-to-find> <replacement-text>" << std::endl << std::endl
+              << "Options:" << std::endl
+              << "  --case-mode <mode>    Set case mode (preserve, ignore, match). Default: preserve" << std::endl
+              << "  --match-whole-word    Only replace whole words" << std::endl
+              << "  --recursive, -r       Process directories recursively" << std::endl
+              << "  --verbose, -v         Print detailed information during processing" << std::endl
+              << "  --dry-run             Show what would be replaced without making changes" << std::endl
+              << "  --no-rename           Do not rename files, only replace content" << std::endl
+              << "  --help, -h            Display this help message" << std::endl << std::endl
+              << "Examples:" << std::endl
+              << "  robolina src/ \"old_name\" \"new_name\" --case-mode preserve" << std::endl
+              << "  robolina --match-whole-word --recursive . \"findMe\" \"replaceWithThis\"" << std::endl;
 }
 
 CommandLineOptions parseCommandLine(int argc, char* argv[])
