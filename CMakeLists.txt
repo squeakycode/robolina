@@ -38,3 +38,29 @@ endif()
 
 add_subdirectory(sample)
 add_subdirectory(cli)
+
+# Packaging support
+include(CPack)
+
+set(CPACK_PACKAGE_NAME "robolina")
+set(CPACK_PACKAGE_VENDOR "YourCompany")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Robolina - Text replacement tool with case preservation")
+set(CPACK_PACKAGE_VERSION "0.1.0")
+set(CPACK_PACKAGE_CONTACT "andreas.gau@gmx.org")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE")
+set(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/README.md")
+
+# Set package type defaults
+if(APPLE)
+    set(CPACK_GENERATOR "DragNDrop")
+elseif(UNIX)
+    set(CPACK_GENERATOR "TGZ")
+elseif(WIN32)
+    set(CPACK_GENERATOR "ZIP")
+endif()
+
+# Optionally, install the CLI binary
+install(TARGETS robolina_cli DESTINATION bin)
+
+include(CPack)
+

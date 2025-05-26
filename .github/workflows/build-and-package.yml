@@ -1,0 +1,60 @@
+name: Build and Package
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up CMake
+        uses: jwlawson/actions-setup-cmake@v1
+        with:
+          cmake-version: '3.22.0'
+
+      - name: Install build dependencies
+        run: sudo apt-get update && sudo apt-get install -y build-essential ninja-build
+
+      - name: Configure CMake
+        run: cmake -S . -B build -G Ninja
+
+      - name: Build
+        run: cmake --build build --config Release
+
+      - name: Run tests
+        run: ctest --test-dir build --output-on-failure
+
+      - name: Package with CPack
+        run: |
+          cd build
+          cpack
+
+      - name: Upload TGZ package artifact (Linux)
+        if: runner.os == 'Linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: robolina-package-tgz
+          path: build/*.tar.gz
+          if-no-files-found: error
+
+      - name: Upload ZIP package artifact (Windows)
+        if: runner.os == 'Windows'
+        uses: actions/upload-artifact@v4
+        with:
+          name: robolina-package-zip
+          path: build/*.zip
+          if-no-files-found: error
+
+      - name: Upload DMG package artifact (macOS)
+        if: runner.os == 'macOS'
+        uses: actions/upload-artifact@v4
+        with:
+          name: robolina-package-dmg
+          path: build/*.dmg
+          if-no-files-found: error
