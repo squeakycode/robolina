@@ -347,14 +347,24 @@ namespace robolina
     protected:
         static const size_t c_invalid_token_id = static_cast<size_t>(-1);
 
-        static char_type to_lower(char_type c)
+        static char_type to_lower(char c)
         {
             return static_cast<char_type>(std::tolower(static_cast<unsigned char>(c)));
         }
 
-        static char_type to_upper(char_type c)
+        static char_type to_upper(char c)
         {
             return static_cast<char_type>(std::toupper(static_cast<unsigned char>(c)));
+        }
+
+        static char_type to_lower(wchar_t c)
+        {
+            return static_cast<char_type>(std::tolower(static_cast<uint16_t>(c)));
+        }
+
+        static char_type to_upper(wchar_t c)
+        {
+            return static_cast<char_type>(std::toupper(static_cast<uint16_t>(c)));
         }
 
         std::vector<std::basic_string<char_type>> split_text(const char_type* text) const
