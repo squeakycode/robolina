@@ -43,8 +43,8 @@ CommandLineOptions parseCommandLine(int argc, char* argv[]) {
         throw std::runtime_error("Not enough arguments");
     }
 
-    // Parse command line arguments
     int currentArg = 1;
+    int positionalIndex = 0;
     while (currentArg < argc) {
         std::string arg = argv[currentArg];
 
@@ -63,7 +63,6 @@ CommandLineOptions parseCommandLine(int argc, char* argv[]) {
             if (currentArg + 1 >= argc) {
                 throw std::runtime_error("Missing value for --case-mode");
             }
-
             std::string modeValue = argv[++currentArg];
             if (modeValue == "preserve") {
                 options.caseMode = robolina::case_mode::preserve_case;
@@ -77,39 +76,23 @@ CommandLineOptions parseCommandLine(int argc, char* argv[]) {
         } else if (arg[0] == '-') {
             throw std::runtime_error("Unknown option: " + arg);
         } else {
-            // Non-option arguments are: path, text-to-find, replacement-text
-            if (options.paths.empty()) {
-                // First non-option is the path
+            // Use positionalIndex to determine which positional argument this is
+            if (positionalIndex == 0) {
                 options.paths.push_back(arg);
-            } else if (options.textToFind.empty()) {
-                // Second non-option is the text to find
+            } else if (positionalIndex == 1) {
                 options.textToFind = arg;
-            } else {
-                // Third non-option is the replacement text
+            } else if (positionalIndex == 2) {
                 options.replacementText = arg;
+            } else {
+                throw std::runtime_error("Too many positional arguments");
             }
+            positionalIndex++;
         }
-
         currentArg++;
     }
 
-    // If paths contains just one element and text-to-find and replacement-text
-    // are still empty, assume the remaining mandatory args are missing
-    if (options.paths.size() == 1 && options.textToFind.empty() && options.replacementText.empty()) {
-        throw std::runtime_error("Missing text-to-find and replacement-text arguments");
-    }
-
-    // Check if we have all required arguments
-    if (options.paths.empty()) {
-        throw std::runtime_error("Missing path argument");
-    }
-
-    if (options.textToFind.empty()) {
-        throw std::runtime_error("Missing text-to-find argument");
-    }
-
-    if (options.replacementText.empty()) {
-        throw std::runtime_error("Missing replacement-text argument");
+    if (positionalIndex < 3) {
+        throw std::runtime_error("Missing required positional arguments");
     }
 
     return options;
