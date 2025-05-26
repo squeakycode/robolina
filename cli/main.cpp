@@ -20,6 +20,7 @@ struct CommandLineOptions
     bool verbose = false;
     bool dryRun = false;
     bool allowRename = true; // New option to control file renaming
+    std::vector<std::string> customExtensions; // New: custom file extensions
 };
 
 void printUsage()
@@ -33,10 +34,12 @@ void printUsage()
               << "  --verbose, -v         Print detailed information during processing" << std::endl
               << "  --dry-run             Show what would be replaced without making changes" << std::endl
               << "  --no-rename           Do not rename files, only replace content" << std::endl
+              << "  --extensions <exts>   Semicolon-separated list of file extensions to process (e.g. .cpp;.h;.txt)" << std::endl
               << "  --help, -h            Display this help message" << std::endl << std::endl
               << "Examples:" << std::endl
               << "  robolina src/ \"old_name\" \"new_name\" --case-mode preserve" << std::endl
-              << "  robolina --match-whole-word --recursive . \"findMe\" \"replaceWithThis\"" << std::endl;
+              << "  robolina --match-whole-word --recursive . \"findMe\" \"replaceWithThis\"" << std::endl
+              << "  robolina --extensions .cpp;.h;.txt src/ foo bar" << std::endl;
 }
 
 CommandLineOptions parseCommandLine(int argc, char* argv[])
@@ -104,6 +107,27 @@ CommandLineOptions parseCommandLine(int argc, char* argv[])
         {
             options.allowRename = false;
         }
+        else if (arg == "--extensions")
+        {
+            if (currentArg + 1 >= argc)
+            {
+                throw std::runtime_error("Missing value for --extensions");
+            }
+            std::string extList = argv[++currentArg];
+            size_t start = 0, end = 0;
+            while ((end = extList.find(';', start)) != std::string::npos)
+            {
+                std::string ext = extList.substr(start, end - start);
+                if (!ext.empty()) options.customExtensions.push_back(ext);
+                start = end + 1;
+            }
+            std::string lastExt = extList.substr(start);
+            if (!lastExt.empty()) options.customExtensions.push_back(lastExt);
+            if (options.customExtensions.empty())
+            {
+                throw std::runtime_error("No valid extensions provided in --extensions");
+            }
+        }
         else if (arg[0] == '-')
         {
             throw std::runtime_error("Unknown option: " + arg);
@@ -140,10 +164,28 @@ CommandLineOptions parseCommandLine(int argc, char* argv[])
     return options;
 }
 
-bool shouldProcessFile(const fs::path& path)
+bool shouldProcessFile(const fs::path& path, const std::vector<std::string>& customExtensions)
 {
     // Skip binary files, hidden files, etc.
     std::string file_extension = path.extension().string();
+
+    // Convert file_extension to lower case for case-insensitive comparison
+    std::string file_extension_lower = file_extension;
+    std::transform(file_extension_lower.begin(), file_extension_lower.end(), file_extension_lower.begin(), ::tolower);
+
+    if (!customExtensions.empty())
+    {
+        for (const auto& ext : customExtensions)
+        {
+            std::string ext_lower = ext;
+            std::transform(ext_lower.begin(), ext_lower.end(), ext_lower.begin(), ::tolower);
+            if (file_extension_lower == ext_lower)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 
     // List of text file extensions to process
     static const char* textExtensions[] = {
@@ -151,10 +193,6 @@ bool shouldProcessFile(const fs::path& path)
         ".html", ".css", ".xml", ".json", ".yaml", ".yml", ".sh", ".bat", ".ps1",
         ".cmake", ".rst", ".tex", ".vndf", ".epdf", ".qml", ".qrc"
     };
-
-    // Convert file_extension to lower case for case-insensitive comparison
-    std::string file_extension_lower = file_extension;
-    std::transform(file_extension_lower.begin(), file_extension_lower.end(), file_extension_lower.begin(), ::tolower);
 
     constexpr size_t numExtensions = sizeof(textExtensions) / sizeof(textExtensions[0]);
     for (size_t i = 0; i < numExtensions; ++i)
@@ -203,7 +241,7 @@ fs::path renameFileWithReplacement(const fs::path& originalPath, const CommandLi
 
 void processFile(const fs::path& path, const CommandLineOptions& options)
 {
-    if (!fs::is_regular_file(path) || !shouldProcessFile(path))
+    if (!fs::is_regular_file(path) || !shouldProcessFile(path, options.customExtensions))
     {
         return;
     }
