@@ -25,7 +25,7 @@ struct CommandLineOptions
 
 void printUsage()
 {
-    std::cout << "Robolina - Text replacement tool with case preservation" << std::endl << std::endl
+    std::cout << "Robolina - v0.1.0 - Text replacement tool with case preservation" << std::endl << std::endl
               << "Usage: robolina [options] <path> <text-to-find> <replacement-text>" << std::endl << std::endl
               << "Options:" << std::endl
               << "  --case-mode <mode>    Set case mode (preserve, ignore, match). Default: preserve" << std::endl
