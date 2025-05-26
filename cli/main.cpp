@@ -5,6 +5,7 @@
 #include <vector>
 #include <filesystem>
 #include <stdexcept>
+#include <algorithm>
 
 namespace fs = std::filesystem;
 
@@ -119,13 +120,25 @@ bool shouldProcessFile(const fs::path& path) {
     std::string file_extension = path.extension().string();
 
     // List of text file extensions to process
-    static const std::vector<std::string> textExtensions = {
+    static const char* textExtensions[] = {
         ".txt", ".md", ".c", ".cpp", ".h", ".hpp", ".cs", ".java", ".py", ".js",
         ".html", ".css", ".xml", ".json", ".yaml", ".yml", ".sh", ".bat", ".ps1",
         ".cmake", ".rst", ".tex", ".vndf", ".epdf", ".qml", ".qrc"
     };
 
-    return std::find(textExtensions.cbegin(), textExtensions.cend(), file_extension) != textExtensions.cend();
+    // Convert file_extension to lower case for case-insensitive comparison
+    std::string file_extension_lower = file_extension;
+    std::transform(file_extension_lower.begin(), file_extension_lower.end(), file_extension_lower.begin(), ::tolower);
+
+    constexpr size_t numExtensions = sizeof(textExtensions) / sizeof(textExtensions[0]);
+    for (size_t i = 0; i < numExtensions; ++i)
+    {
+        if (file_extension_lower == textExtensions[i])
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 // Add function to perform find and replace on filenames
@@ -314,6 +327,4 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 }
-
-
 
