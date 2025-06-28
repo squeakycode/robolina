@@ -80,6 +80,15 @@ CommandLineOptions parseCommandLine(int argc, char* argv[])
 {
     CommandLineOptions options;
 
+    // Check for help option before any error or argument count checks
+    for (int i = 1; i < argc; ++i) {
+        std::string arg = argv[i];
+        if (arg == "--help" || arg == "-h") {
+            printUsage();
+            exit(0);
+        }
+    }
+
     if (argc < 4)
     {
         printUsage();
@@ -92,12 +101,7 @@ CommandLineOptions parseCommandLine(int argc, char* argv[])
     {
         std::string arg = argv[currentArg];
 
-        if (arg == "--help" || arg == "-h")
-        {
-            printUsage();
-            exit(0);
-        }
-        else if (arg == "--match-whole-word")
+        if (arg == "--match-whole-word")
         {
             options.matchWholeWord = true;
         }
@@ -479,5 +483,4 @@ int main(int argc, char* argv[])
         return 1;
     }
 }
-
 
