@@ -51,10 +51,10 @@ jobs:
           path: build/*.zip
           if-no-files-found: error
 
-      - name: Upload DMG package artifact (macOS)
+      - name: Upload ZIP package artifact (macOS)
         if: runner.os == 'macOS'
         uses: actions/upload-artifact@v4
         with:
-          name: robolina-package-dmg
-          path: build/*.dmg
+          name: robolina-package-zip
+          path: build/*.zip
           if-no-files-found: error

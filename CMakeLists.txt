@@ -52,15 +52,9 @@ set(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/README.md")
 
 # Set package type defaults
 if(APPLE)
-    set(CPACK_GENERATOR "DragNDrop")
+    set(CPACK_GENERATOR "ZIP")
 elseif(UNIX)
     set(CPACK_GENERATOR "TGZ")
 elseif(WIN32)
     set(CPACK_GENERATOR "ZIP")
 endif()
-
-# Optionally, install the CLI binary
-install(TARGETS robolina_cli DESTINATION bin)
-
-include(CPack)
-
