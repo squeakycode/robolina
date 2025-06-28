@@ -24,5 +24,9 @@ int main()
     // Output the result
     std::cout << "Original text: " << text << std::endl;
     std::cout << "Modified text: " << result << std::endl;
+
+    // Output
+    // Original text: HelloWorld! This is a CamelCase example with fOO_bar.
+    // Modified text: HiUniverse! This is a snake_case example with baz_qux.
     return 0;
 }

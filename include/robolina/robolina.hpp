@@ -1,5 +1,6 @@
 // Robolina Replace Preserve Case
 // Link: https://github.com/squeakycode/robolina
+// Uses: https://github.com/squeakycode/cpptokenfinder
 // Version: 0.1.0
 // Minimum required C++ Standard: C++11
 // License: BSD 3-Clause License
@@ -78,7 +79,7 @@ find and the text to replace it with.
 3. Then the source text is parsed and the replacements are executed.
 */
 #pragma once
-#include <cpptokenfinder/cpptokenfinder.hpp>
+#include "cpptokenfinder.hpp"
 #include <stdexcept>
 #include <string>
 #include <vector>
