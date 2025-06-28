@@ -9,6 +9,12 @@ endif()
 
 set (CMAKE_CXX_STANDARD 17) # Updated to C++17 for std::filesystem
 
+# CLI tool version configuration
+set(ROBOLINA_CLI_VERSION_MAJOR 0)
+set(ROBOLINA_CLI_VERSION_MINOR 1)
+set(ROBOLINA_CLI_VERSION_PATCH 1)
+set(ROBOLINA_CLI_VERSION_STRING "${ROBOLINA_CLI_VERSION_MAJOR}.${ROBOLINA_CLI_VERSION_MINOR}.${ROBOLINA_CLI_VERSION_PATCH}")
+
 # Use highest warning levels
 macro(custom_target_use_highest_warning_level TargetName)
 if(MSVC)
@@ -45,7 +51,7 @@ include(CPack)
 set(CPACK_PACKAGE_NAME "robolina")
 set(CPACK_PACKAGE_VENDOR "YourCompany")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Robolina - Text replacement tool with case preservation")
-set(CPACK_PACKAGE_VERSION "0.1.0")
+set(CPACK_PACKAGE_VERSION "${ROBOLINA_CLI_VERSION_STRING}")
 set(CPACK_PACKAGE_CONTACT "andreas.gau@gmx.org")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE")
 set(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/README.md")
