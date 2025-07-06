@@ -1,0 +1,42 @@
+Robolina - v0.1.1 - Text find and replace tool with case preservation.
+
+Usage: robolina [options] <path> <text-to-find> <replacement-text>
+
+Options:
+  --case-mode <mode>        Set case mode (preserve, ignore, match).
+                            Default: preserve
+  --match-whole-word        Only replace whole words
+  --replacements-file, -f   Optionally provide replacement options in a file.
+  --recursive, -r           Process directories recursively
+  --verbose, -v             Print detailed information during processing
+  --dry-run                 Show what would be replaced without making changes
+  --no-rename               Do not rename files, only replace content
+  --extensions <exts>       Semicolon-separated list of file extensions to
+                            process (e.g. .cpp;.h;.txt)
+  --help, -h                Display this help message
+
+Examples:
+  robolina src/ "old_name" "new_name" --case-mode preserve
+  robolina src/ --replacements-file replacements.txt
+  robolina src/ --replacements-file more_replacements.txt "old_name" "new_name"
+  robolina --match-whole-word --recursive . "findMe" "replaceWithThis"
+  robolina --extensions .cpp;.h;.txt src/ foo bar
+
+Note: The text-to-find and the replacement-text use C-String escaping.
+
+Replacements file syntax example:
+----------------------------------------------------------------------
+#This is a comment.
+# valid values are preserve, ignore, match.
+case-mode=preserve
+# valid values are true, false.match-whole-word=false
+text-to-find=foo bar
+replacement-text=baz_qux
+# Empty lines are ignored.
+
+case-mode=ignore
+match-whole-word=true
+text-to-find=value
+replacement-text=myValue
+# case-mode and match-whole-word stay set for the next replacements.
+----------------------------------------------------------------------

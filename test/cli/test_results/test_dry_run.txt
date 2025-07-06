@@ -1,0 +1,8 @@
+Performing dry run.
+Ignored because of file extension: "test_results/test_dry_run/.DS_Store"
+Ignored because of file extension: "test_results/test_dry_run/testfile4_one_two_three.notouch"
+File content would change: "test_results/test_dry_run/testfile1_OneTwoThree.txt"
+File would be renamed: "test_results/test_dry_run/testfile1_OneTwoThree.txt" -> "testfile1_FourFiveSix.txt"
+No changes needed for file: "test_results/test_dry_run/testfile2.txt"
+File content would change: "test_results/test_dry_run/testfile3_one_two_three_text.txt"
+File would be renamed: "test_results/test_dry_run/testfile3_one_two_three_text.txt" -> "testfile3_four_five_six_text.txt"

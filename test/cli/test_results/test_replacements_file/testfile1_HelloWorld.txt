@@ -1,0 +1,38 @@
+| Example        | Casing           |
+|--------------- |------------------|
+| hello world  | Normal texxt      |
+| helloWorld    | Camel was_case       |
+| HelloWorld    | Pascal was_case      |
+| helloworld    | All lowercase    |
+| HELLOWORLD    | All uppercase    |
+| hello_world  | Lower snake was_case |
+| HELLO_WORLD  | Upper snake was_case |
+| hello-world  | Lower kebab was_case |
+| HELLO-WORLD  | Upper kebab was_case |
+| texthello world  | Normal texxt      |
+| texthelloWorld    | Camel was_case       |
+| textHelloWorld    | Pascal was_case      |
+| texthelloworld    | All lowercase    |
+| textHELLOWORLD    | All uppercase    |
+| texthello_world  | Lower snake was_case |
+| textHELLO_WORLD  | Upper snake was_case |
+| texthello-world  | Lower kebab was_case |
+| textHELLO-WORLD  | Upper kebab was_case |
+| hello worldtext  | Normal texxt      |
+| helloWorldtext    | Camel was_case       |
+| HelloWorldtext    | Pascal was_case      |
+| helloworldtext    | All lowercase    |
+| HELLOWORLDtext    | All uppercase    |
+| hello_worldtext  | Lower snake was_case |
+| HELLO_WORLDtext  | Upper snake was_case |
+| hello-worldtext  | Lower kebab was_case |
+| HELLO-WORLDtext  | Upper kebab was_case |
+| texthello worldtext  | Normal texxt      |
+| texthelloWorldtext    | Camel was_case       |
+| textHelloWorldtext    | Pascal was_case      |
+| texthelloworldtext    | All lowercase    |
+| textHELLOWORLDtext    | All uppercase    |
+| texthello_worldtext  | Lower snake was_case |
+| textHELLO_WORLDtext  | Upper snake was_case |
+| texthello-worldtext  | Lower kebab was_case |
+| textHELLO-WORLDtext  | Upper kebab was_case |

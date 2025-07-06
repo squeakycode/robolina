@@ -1,0 +1,77 @@
+| Example        | Casing           |a
+b
+c|--------------- |------------------|a
+b
+c| one two three  | Normal text      |a
+b
+c| oneTwoThree    | Camel case       |a
+b
+c| OneTwoThree    | Pascal case      |a
+b
+c| onetwothree    | All lowercase    |a
+b
+c| ONETWOTHREE    | All uppercase    |a
+b
+c| one_two_three  | Lower snake case |a
+b
+c| ONE_TWO_THREE  | Upper snake case |a
+b
+c| one-two-three  | Lower kebab case |a
+b
+c| ONE-TWO-THREE  | Upper kebab case |a
+b
+c| textone two three  | Normal text      |a
+b
+c| textoneTwoThree    | Camel case       |a
+b
+c| textOneTwoThree    | Pascal case      |a
+b
+c| textonetwothree    | All lowercase    |a
+b
+c| textONETWOTHREE    | All uppercase    |a
+b
+c| textone_two_three  | Lower snake case |a
+b
+c| textONE_TWO_THREE  | Upper snake case |a
+b
+c| textone-two-three  | Lower kebab case |a
+b
+c| textONE-TWO-THREE  | Upper kebab case |a
+b
+c| one two threetext  | Normal text      |a
+b
+c| oneTwoThreetext    | Camel case       |a
+b
+c| OneTwoThreetext    | Pascal case      |a
+b
+c| onetwothreetext    | All lowercase    |a
+b
+c| ONETWOTHREEtext    | All uppercase    |a
+b
+c| one_two_threetext  | Lower snake case |a
+b
+c| ONE_TWO_THREEtext  | Upper snake case |a
+b
+c| one-two-threetext  | Lower kebab case |a
+b
+c| ONE-TWO-THREEtext  | Upper kebab case |a
+b
+c| textone two threetext  | Normal text      |a
+b
+c| textoneTwoThreetext    | Camel case       |a
+b
+c| textOneTwoThreetext    | Pascal case      |a
+b
+c| textonetwothreetext    | All lowercase    |a
+b
+c| textONETWOTHREEtext    | All uppercase    |a
+b
+c| textone_two_threetext  | Lower snake case |a
+b
+c| textONE_TWO_THREEtext  | Upper snake case |a
+b
+c| textone-two-threetext  | Lower kebab case |a
+b
+c| textONE-TWO-THREEtext  | Upper kebab case |a
+b
+c

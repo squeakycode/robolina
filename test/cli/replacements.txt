@@ -1,0 +1,16 @@
+#This is a comment.
+# valid values are preserve, ignore, match.
+case-mode=preserve
+# valid values are true, false.
+match-whole-word=false
+text-to-find=one-two-three
+replacement-text=hello world
+# Empty lines are ignored.
+
+case-mode=ignore
+match-whole-word=true
+text-to-find=text
+replacement-text=texxt
+# case-mode and match-whole-word stay set for the next replacements.
+text-to-find=case
+replacement-text=was_case

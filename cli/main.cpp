@@ -73,15 +73,17 @@ void printUsage()
     std::cout << "Robolina - v" << ROBOLINA_CLI_VERSION_STRING << " - Text find and replace tool with case preservation." << std::endl << std::endl
               << "Usage: robolina [options] <path> <text-to-find> <replacement-text>" << std::endl << std::endl
               << "Options:" << std::endl
-              << "  --case-mode <mode>        Set case mode (preserve, ignore, match). Default: preserve" << std::endl
-              << "  --match-whole-word        Only replace whole words" << std::endl
+              << "  --case-mode <mode>        Set case mode (preserve, ignore, match)." << std::endl
+              << "                            Default: preserve" << std::endl
+              << "  --match-whole-word        Only replace whole words." << std::endl
               << "  --replacements-file, -f   Optionally provide replacement options in a file." << std::endl
-              << "  --recursive, -r           Process directories recursively" << std::endl
-              << "  --verbose, -v             Print detailed information during processing" << std::endl
-              << "  --dry-run                 Show what would be replaced without making changes" << std::endl
-              << "  --no-rename               Do not rename files, only replace content" << std::endl
-              << "  --extensions <exts>       Semicolon-separated list of file extensions to process (e.g. .cpp;.h;.txt)" << std::endl
-              << "  --help, -h                Display this help message" << std::endl << std::endl
+              << "  --recursive, -r           Process directories recursively." << std::endl
+              << "  --verbose, -v             Print detailed information during processing." << std::endl
+              << "  --dry-run                 Show what would be replaced without making changes." << std::endl
+              << "  --no-rename               Do not rename files, only replace content." << std::endl
+              << "  --extensions <exts>       Semicolon-separated list of file extensions to" << std::endl
+              << "                            process (e.g. .cpp;.h;.txt)" << std::endl
+              << "  --help, -h                Display this help message." << std::endl << std::endl
               << "Examples:" << std::endl
               << "  robolina src/ \"old_name\" \"new_name\" --case-mode preserve" << std::endl
               << "  robolina src/ --replacements-file replacements.txt" << std::endl
@@ -243,12 +245,6 @@ CommandLineOptions parseCommandLine(int argc, char* argv[])
         }
     }
 
-    if (argc < 4)
-    {
-        printUsage();
-        throw std::runtime_error("Not enough arguments");
-    }
-
     int currentArg = 1;
     int positionalIndex = 0;
     while (currentArg < argc)
@@ -270,6 +266,7 @@ CommandLineOptions parseCommandLine(int argc, char* argv[])
         else if (arg == "--dry-run")
         {
             options.processingOptions.dryRun = true;
+            options.processingOptions.verbose = true;
         }
         else if (arg == "--case-mode")
         {
@@ -321,8 +318,9 @@ CommandLineOptions parseCommandLine(int argc, char* argv[])
             }
         }
         else if (arg == "--replacements-file" || arg == "-f") {
-            if (currentArg + 1 >= argc) {
-                throw std::runtime_error("Missing value for --options-file");
+            if (currentArg + 1 >= argc)
+            {
+                throw std::runtime_error("Missing value for --replacements-file");
             }
             std::string filePath = argv[++currentArg];
             loadOptionsFromFile(filePath, options.replacements);
@@ -354,7 +352,11 @@ CommandLineOptions parseCommandLine(int argc, char* argv[])
         }
         currentArg++;
     }
-    if (positionalIndex == 2 || positionalIndex == 0 || (positionalIndex == 1 && options.replacements.empty()))
+    if (positionalIndex == 1 && !options.replacements.empty())
+    {
+        //using replacements file
+    }
+    else if (positionalIndex == 2 || positionalIndex == 0)
     {
         throw std::runtime_error("Missing required positional arguments");
     }
@@ -438,8 +440,16 @@ fs::path renameFileWithReplacement(const fs::path& originalPath, const robolina:
 
 void processFile(const fs::path& path, const robolina::case_preserve_replacer<char>& replacer, const ProcessingOptions& options)
 {
-    if (!fs::is_regular_file(path) || !shouldProcessFile(path, options.customExtensions))
+    if (!fs::is_regular_file(path))
     {
+        return;
+    }
+    if (!shouldProcessFile(path, options.customExtensions))
+    {
+        if (options.verbose)
+        {
+            std::cout << "Ignored because of file extension: " << path << std::endl;
+        }
         return;
     }
 
@@ -500,11 +510,25 @@ void processFile(const fs::path& path, const robolina::case_preserve_replacer<ch
         {
             if (hasChanges)
             {
-                std::cout << "Changes found in file content: " << path << std::endl;
+                if (options.dryRun)
+                {
+                    std::cout << "File content would change: " << path << std::endl;
+                }
+                else
+                {
+                    std::cout << "File content will change: " << path << std::endl;
+                }
             }
             if (needsRename)
             {
-                std::cout << "File will be renamed: " << path << " -> " << newPath.filename() << std::endl;
+                if (options.dryRun)
+                {
+                    std::cout << "File would be renamed: " << path << " -> " << newPath.filename() << std::endl;
+                }
+                else
+                {
+                    std::cout << "File will be renamed: " << path << " -> " << newPath.filename() << std::endl;
+                }
             }
         }
 
@@ -529,10 +553,18 @@ void processFile(const fs::path& path, const robolina::case_preserve_replacer<ch
 
                 outFile.write(newContent.data(), newContent.size());
                 outFile.close();
+                if (options.verbose)
+                {
+                    std::cout << "Updated file content." << std::endl;
+                }
 
                 if (needsRename)
                 {
                     fs::rename(path, newPath);
+                    if (options.verbose)
+                    {
+                        std::cout << "Renamed file." << std::endl;
+                    }
                 }
             }
 
@@ -547,6 +579,10 @@ void processFile(const fs::path& path, const robolina::case_preserve_replacer<ch
                         return;
                     }
                     fs::rename(path, newPath);
+                    if (options.verbose)
+                    {
+                        std::cout << "Renamed file." << std::endl;
+                    }
                 }
                 catch (const fs::filesystem_error& e)
                 {
@@ -554,22 +590,6 @@ void processFile(const fs::path& path, const robolina::case_preserve_replacer<ch
                     return;
                 }
             }
-
-            if (options.verbose)
-            {
-                if (hasChanges)
-                {
-                    std::cout << "Updated file content" << std::endl;
-                }
-                if (needsRename)
-                {
-                    std::cout << "Renamed file to: " << newPath.filename() << std::endl;
-                }
-            }
-        }
-        else if (options.verbose)
-        {
-            std::cout << "Dry run - no changes made" << std::endl;
         }
     }
     else if (options.verbose)
@@ -630,6 +650,10 @@ int main(int argc, char* argv[])
     try
     {
         CommandLineOptions options = parseCommandLine(argc, argv);
+        if (options.processingOptions.dryRun && options.processingOptions.verbose)
+        {
+            std::cout << "Performing dry run." << std::endl;
+        }
         processPath(options.filenameOrPath, options);
         return 0;
     }

@@ -1,0 +1,38 @@
+| Example        | Casing           |
+|--------------- |------------------|
+| four five six  | Normal text      |
+| fourFiveSix    | Camel case       |
+| FourFiveSix    | Pascal case      |
+| fourfivesix    | All lowercase    |
+| FOURFIVESIX    | All uppercase    |
+| four_five_six  | Lower snake case |
+| FOUR_FIVE_SIX  | Upper snake case |
+| four-five-six  | Lower kebab case |
+| FOUR-FIVE-SIX  | Upper kebab case |
+| textfour five six  | Normal text      |
+| textfourFiveSix    | Camel case       |
+| textFourFiveSix    | Pascal case      |
+| textfourfivesix    | All lowercase    |
+| textFOURFIVESIX    | All uppercase    |
+| textfour_five_six  | Lower snake case |
+| textFOUR_FIVE_SIX  | Upper snake case |
+| textfour-five-six  | Lower kebab case |
+| textFOUR-FIVE-SIX  | Upper kebab case |
+| four five sixtext  | Normal text      |
+| fourFiveSixtext    | Camel case       |
+| FourFiveSixtext    | Pascal case      |
+| fourfivesixtext    | All lowercase    |
+| FOURFIVESIXtext    | All uppercase    |
+| four_five_sixtext  | Lower snake case |
+| FOUR_FIVE_SIXtext  | Upper snake case |
+| four-five-sixtext  | Lower kebab case |
+| FOUR-FIVE-SIXtext  | Upper kebab case |
+| textfour five sixtext  | Normal text      |
+| textfourFiveSixtext    | Camel case       |
+| textFourFiveSixtext    | Pascal case      |
+| textfourfivesixtext    | All lowercase    |
+| textFOURFIVESIXtext    | All uppercase    |
+| textfour_five_sixtext  | Lower snake case |
+| textFOUR_FIVE_SIXtext  | Upper snake case |
+| textfour-five-sixtext  | Lower kebab case |
+| textFOUR-FIVE-SIXtext  | Upper kebab case |

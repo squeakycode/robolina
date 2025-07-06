@@ -1,0 +1,16 @@
+Ignored because of file extension: "test_results/test_verbose/.DS_Store"
+File content will change: "test_results/test_verbose/nestedtestdirectory/testfile4_one_two_three.txt"
+File will be renamed: "test_results/test_verbose/nestedtestdirectory/testfile4_one_two_three.txt" -> "testfile4_four_five_six.txt"
+Updated file content.
+Renamed file.
+No changes needed for file: "test_results/test_verbose/nestedtestdirectory/testfile5.txt"
+Ignored because of file extension: "test_results/test_verbose/testfile4_one_two_three.notouch"
+File content will change: "test_results/test_verbose/testfile1_OneTwoThree.txt"
+File will be renamed: "test_results/test_verbose/testfile1_OneTwoThree.txt" -> "testfile1_FourFiveSix.txt"
+Updated file content.
+Renamed file.
+No changes needed for file: "test_results/test_verbose/testfile2.txt"
+File content will change: "test_results/test_verbose/testfile3_one_two_three_text.txt"
+File will be renamed: "test_results/test_verbose/testfile3_one_two_three_text.txt" -> "testfile3_four_five_six_text.txt"
+Updated file content.
+Renamed file.
