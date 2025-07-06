@@ -64,3 +64,6 @@ elseif(UNIX)
 elseif(WIN32)
     set(CPACK_GENERATOR "ZIP")
 endif()
+
+# Ensure CPACK_GENERATOR is passed to CPack
+set(CPACK_GENERATOR ${CPACK_GENERATOR} CACHE STRING "CPack generator")
