@@ -1,4 +1,4 @@
-# Robolina - Find and Replace Preserving Case
+# Robolina - Find and Replace in Files Preserving Case
 
 ## Purpose
 
