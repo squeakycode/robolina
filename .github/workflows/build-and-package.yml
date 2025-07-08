@@ -32,7 +32,16 @@ jobs:
       - name: Package with CPack
         run: |
           cd build
-          cpack
+          if [ "${{ runner.os }}" = "Linux" ]; then
+            cpack -G TGZ
+          elif [ "${{ runner.os }}" = "Windows" ]; then
+            cpack -G ZIP
+          elif [ "${{ runner.os }}" = "macOS" ]; then
+            cpack -G ZIP
+          else
+            cpack
+          fi
+        shell: bash
 
       - name: Upload TGZ package artifact (Linux)
         if: runner.os == 'Linux'
