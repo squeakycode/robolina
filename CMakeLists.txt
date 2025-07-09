@@ -15,6 +15,12 @@ set(ROBOLINA_CLI_VERSION_MINOR 2)
 set(ROBOLINA_CLI_VERSION_PATCH 0)
 set(ROBOLINA_CLI_VERSION_STRING "${ROBOLINA_CLI_VERSION_MAJOR}.${ROBOLINA_CLI_VERSION_MINOR}.${ROBOLINA_CLI_VERSION_PATCH}")
 set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/install)
+# Set package type defaults
+if(APPLE)
+    # Enable ad-hoc code signing for macOS builds
+    set(CMAKE_CODESIGN_IDENTITY "-")
+    set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64" CACHE STRING "Build architectures for Mac OS X" FORCE)
+endif()
 
 # Use highest warning levels
 macro(custom_target_use_highest_warning_level TargetName)
