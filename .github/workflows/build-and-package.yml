@@ -32,22 +32,13 @@ jobs:
       - name: Package with CPack
         run: |
           cd build
-          if [ "${{ runner.os }}" = "Linux" ]; then
-            cpack -G TGZ
-          elif [ "${{ runner.os }}" = "Windows" ]; then
-            cpack -G ZIP
-          elif [ "${{ runner.os }}" = "macOS" ]; then
-            cpack -G ZIP
-          else
-            cpack
-          fi
-        shell: bash
+          cpack
 
       - name: Upload TGZ package artifact (Linux)
         if: runner.os == 'Linux'
         uses: actions/upload-artifact@v4
         with:
-          name: robolina-package-tgz
+          name: robolina-package-linux-tgz
           path: build/*.tar.gz
           if-no-files-found: error
 
@@ -55,7 +46,7 @@ jobs:
         if: runner.os == 'Windows'
         uses: actions/upload-artifact@v4
         with:
-          name: robolina-package-zip
+          name: robolina-package-windows-zip
           path: build/*.zip
           if-no-files-found: error
 
@@ -63,6 +54,6 @@ jobs:
         if: runner.os == 'macOS'
         uses: actions/upload-artifact@v4
         with:
-          name: robolina-package-zip
+          name: robolina-package-darwin-zip
           path: build/*.zip
           if-no-files-found: error

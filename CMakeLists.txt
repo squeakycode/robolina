@@ -14,6 +14,7 @@ set(ROBOLINA_CLI_VERSION_MAJOR 0)
 set(ROBOLINA_CLI_VERSION_MINOR 2)
 set(ROBOLINA_CLI_VERSION_PATCH 0)
 set(ROBOLINA_CLI_VERSION_STRING "${ROBOLINA_CLI_VERSION_MAJOR}.${ROBOLINA_CLI_VERSION_MINOR}.${ROBOLINA_CLI_VERSION_PATCH}")
+set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/install)
 
 # Use highest warning levels
 macro(custom_target_use_highest_warning_level TargetName)
@@ -46,15 +47,17 @@ add_subdirectory(sample)
 add_subdirectory(cli)
 
 # Packaging support
-include(CPack)
-
 set(CPACK_PACKAGE_NAME "robolina")
 set(CPACK_PACKAGE_VENDOR "YourCompany")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Robolina - Text replacement tool with case preservation")
 set(CPACK_PACKAGE_VERSION "${ROBOLINA_CLI_VERSION_STRING}")
+set(CPACK_PACKAGE_VERSION_MAJOR "${ROBOLINA_CLI_VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR "${ROBOLINA_CLI_VERSION_MINOR}")
+set(CPACK_PACKAGE_VERSION_PATCH "${ROBOLINA_CLI_VERSION_PATCH}")
 set(CPACK_PACKAGE_CONTACT "andreas.gau@gmx.org")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE")
 set(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/README.md")
+
 
 # Set package type defaults
 if(APPLE)
@@ -64,3 +67,5 @@ elseif(UNIX)
 elseif(WIN32)
     set(CPACK_GENERATOR "ZIP")
 endif()
+
+include(CPack)
