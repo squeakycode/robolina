@@ -40,6 +40,7 @@
 #include <vector>
 #include <filesystem>
 #include <stdexcept>
+#include <algorithm>
 #include <sstream>
 
 namespace fs = std::filesystem;
