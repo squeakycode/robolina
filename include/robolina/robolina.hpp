@@ -140,9 +140,13 @@ namespace robolina
          */
         void add_replacement(const char_type* text_to_find, const char_type* replacement_text, case_mode mode, bool match_whole_word = false)
         {
-            if (text_to_find == nullptr || *text_to_find == 0)
+            if (text_to_find == nullptr)
             {
-                throw std::invalid_argument("Failed to add replacement. The text to find is null or empty.");
+                throw std::invalid_argument("Failed to add replacement. The text to find is null.");
+            }
+            if (*text_to_find == 0)
+            {
+                throw std::invalid_argument("Failed to add replacement. The text to find is empty.");
             }
             if (replacement_text == nullptr)
             {

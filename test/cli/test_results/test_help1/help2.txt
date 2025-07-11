@@ -1,4 +1,4 @@
-Robolina - v0.2.0 - Text find and replace tool with case preservation.
+Robolina - v0.3.0 - Text find and replace tool with case preservation.
 
 Usage: robolina [options] <path> <text-to-find> <replacement-text>
 
@@ -11,11 +11,11 @@ Options:
   --verbose, -v             Print detailed information during processing.
   --dry-run                 Show what would be replaced without making changes.
   --no-rename               Do not rename files, only replace content.
-  --extensions <exts>       Semicolon-separated list of file extensions to
+  --extensions <list>       Semicolon-separated list of file extensions to
                             process (e.g. .cpp;.h;.txt)
   --help, -h                Display this help message.
 
-Examples:
+Examples (Attention: use the --dry-run option before making file changes.):
   robolina src/ "old_name" "new_name" --case-mode preserve
   robolina src/ --replacements-file replacements.txt
   robolina src/ --replacements-file more_replacements.txt "old_name" "new_name"

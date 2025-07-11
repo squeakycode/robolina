@@ -33,13 +33,13 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <robolina/robolina.hpp>
+
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
 #include <filesystem>
 #include <stdexcept>
-#include <algorithm>
 #include <sstream>
 
 namespace fs = std::filesystem;
@@ -81,15 +81,16 @@ void printUsage()
               << "  --verbose, -v             Print detailed information during processing." << std::endl
               << "  --dry-run                 Show what would be replaced without making changes." << std::endl
               << "  --no-rename               Do not rename files, only replace content." << std::endl
-              << "  --extensions <exts>       Semicolon-separated list of file extensions to" << std::endl
+              << "  --extensions <list>       Semicolon-separated list of file extensions to" << std::endl
               << "                            process (e.g. .cpp;.h;.txt)" << std::endl
-              << "  --help, -h                Display this help message." << std::endl << std::endl
-              << "Examples:" << std::endl
-              << "  robolina src/ \"old_name\" \"new_name\" --case-mode preserve" << std::endl
-              << "  robolina src/ --replacements-file replacements.txt" << std::endl
-              << "  robolina src/ --replacements-file more_replacements.txt \"old_name\" \"new_name\"" << std::endl
-              << "  robolina --match-whole-word --recursive . \"findMe\" \"replaceWithThis\"" << std::endl
-              << "  robolina --extensions .cpp;.h;.txt src/ foo bar" << std::endl
+              << "  --help, -h                Display this help message." << std::endl
+              << std::endl
+              << "Examples (Attention: use the --dry-run option before making file changes.):" << std::endl
+              << R"(  robolina src/ "old_name" "new_name" --case-mode preserve)" << std::endl
+              << R"(  robolina src/ --replacements-file replacements.txt)" << std::endl
+              << R"(  robolina src/ --replacements-file more_replacements.txt "old_name" "new_name")" << std::endl
+              << R"(  robolina --match-whole-word --recursive . "findMe" "replaceWithThis")" << std::endl
+              << R"(  robolina --extensions .cpp;.h;.txt src/ foo bar)" << std::endl
               << std::endl
               << "Note: The text-to-find and the replacement-text use C-String escaping." << std::endl << std::endl
               << "Replacements file syntax example:" << std::endl
@@ -170,8 +171,10 @@ void loadOptionsFromFile(const std::string& filePath, std::vector<ReplacementOpt
     bool textToFindSet = false;
     bool replacementTextSet = false;
     std::string line;
+    size_t lineCount = 0;
     while (std::getline(file, line))
     {
+        ++lineCount;
         // Ignore empty lines and comments
         if (line.empty() || line[0] == '#')
         {
@@ -197,7 +200,7 @@ void loadOptionsFromFile(const std::string& filePath, std::vector<ReplacementOpt
                 currentOptions.matchWholeWord = (value == "true");
                 if (!currentOptions.matchWholeWord && value != "false")
                 {
-                    throw std::runtime_error("Invalid match-whole-word ('true' or 'false' expected) in file: " + value);
+                    throw std::runtime_error("Invalid match-whole-word ('true' or 'false' expected) in file, line " + std::to_string(lineCount) + ": " + value);
                 }
             }
             else if (key == "case-mode")
@@ -216,9 +219,17 @@ void loadOptionsFromFile(const std::string& filePath, std::vector<ReplacementOpt
                 }
                 else
                 {
-                    throw std::runtime_error("Invalid case mode in file: " + value);
+                    throw std::runtime_error("Invalid case mode in file, line " + std::to_string(lineCount) + ": " + value);
                 }
             }
+            else
+            {
+                throw std::runtime_error("Unknown name in file, line " + std::to_string(lineCount) + ": " + key);
+            }
+        }
+        else
+        {
+            throw std::runtime_error("Bad syntax in file, line " + std::to_string(lineCount));
         }
 
         // Add currentOptions to the list if all required fields are set
@@ -247,6 +258,7 @@ CommandLineOptions parseCommandLine(int argc, char* argv[])
 
     int currentArg = 1;
     int positionalIndex = 0;
+    bool replacementsFileUsed = false;
     while (currentArg < argc)
     {
         std::string arg = argv[currentArg];
@@ -303,7 +315,8 @@ CommandLineOptions parseCommandLine(int argc, char* argv[])
                 throw std::runtime_error("Missing value for --extensions");
             }
             std::string extList = argv[++currentArg];
-            size_t start = 0, end = 0;
+            size_t start = 0;
+            size_t end = 0;
             while ((end = extList.find(';', start)) != std::string::npos)
             {
                 std::string ext = extList.substr(start, end - start);
@@ -324,6 +337,7 @@ CommandLineOptions parseCommandLine(int argc, char* argv[])
             }
             std::string filePath = argv[++currentArg];
             loadOptionsFromFile(filePath, options.replacements);
+            replacementsFileUsed = true;
         }
         else if (arg[0] == '-')
         {
@@ -346,19 +360,15 @@ CommandLineOptions parseCommandLine(int argc, char* argv[])
             }
             else
             {
-                throw std::runtime_error("Too many positional arguments.");
+                throw std::runtime_error("Too many positional arguments");
             }
             positionalIndex++;
         }
         currentArg++;
     }
-    if (positionalIndex == 1 && !options.replacements.empty())
+    if (positionalIndex == 1 && replacementsFileUsed)
     {
         //using replacements file
-    }
-    else if (positionalIndex == 2 || positionalIndex == 0)
-    {
-        throw std::runtime_error("Missing required positional arguments");
     }
     else if (positionalIndex == 3)
     {
@@ -366,7 +376,7 @@ CommandLineOptions parseCommandLine(int argc, char* argv[])
     }
     else
     {
-        throw std::runtime_error("Too many positional arguments.");
+        throw std::runtime_error("Missing required positional arguments");
     }
 
     return options;
@@ -402,10 +412,9 @@ bool shouldProcessFile(const fs::path& path, const std::vector<std::string>& cus
         ".cmake", ".rst", ".tex", ".vndf", ".epdf", ".qml", ".qrc"
     };
 
-    constexpr size_t numExtensions = sizeof(textExtensions) / sizeof(textExtensions[0]);
-    for (size_t i = 0; i < numExtensions; ++i)
+    for (const char* const& ext : textExtensions)
     {
-        if (file_extension_lower == textExtensions[i])
+        if (file_extension_lower == ext)
         {
             return true;
         }
@@ -457,8 +466,15 @@ void processFile(const fs::path& path, const robolina::case_preserve_replacer<ch
     std::ifstream file(path, std::ios::binary);
     if (!file)
     {
-        std::cerr << "Error: Could not open file " << path << std::endl;
-        return;
+        if (options.dryRun)
+        {
+            std::cerr << "Error: Could not open file " << path << std::endl;
+            return;
+        }
+        else
+        {
+            throw std::runtime_error("Could not open file " + path.string());
+        }
     }
 
     file.seekg(0, std::ios::end);
@@ -470,8 +486,15 @@ void processFile(const fs::path& path, const robolina::case_preserve_replacer<ch
     file.read(content.data(), fileSizeInByte);
     if (!file)
     {
-        std::cerr << "Error: Failed to read file " << path << std::endl;
-        return;
+        if (options.dryRun)
+        {
+            std::cerr << "Error: Failed to read file " << path << std::endl;
+            return;
+        }
+        else
+        {
+            throw std::runtime_error("Failed to read file " + path.string());
+        }
     }
     file.close();
 
@@ -529,6 +552,10 @@ void processFile(const fs::path& path, const robolina::case_preserve_replacer<ch
                 {
                     std::cout << "File will be renamed: " << path << " -> " << newPath.filename() << std::endl;
                 }
+                if (fs::exists(newPath))
+                {
+                    std::cerr << "Error: Cannot rename file, destination already exists: " << newPath.string() << std::endl;
+                }
             }
         }
 
@@ -539,19 +566,17 @@ void processFile(const fs::path& path, const robolina::case_preserve_replacer<ch
                 // If the path is different and the file already exists, we need to handle it
                 if (needsRename && fs::exists(newPath))
                 {
-                    std::cerr << "Error: Cannot rename file, destination already exists: " << newPath << std::endl;
-                    return;
+                    throw std::runtime_error("Cannot rename file, destination already exists: " + newPath.string());
                 }
 
                 // Write the content
                 std::ofstream outFile(path, std::ios::binary);
                 if (!outFile)
                 {
-                    std::cerr << "Error: Could not write to file " << path << std::endl;
-                    return;
+                    throw std::runtime_error("Could not write to file " + path.string());
                 }
 
-                outFile.write(newContent.data(), newContent.size());
+                outFile.write(newContent.data(), static_cast<std::streamsize>(newContent.size()));
                 outFile.close();
                 if (options.verbose)
                 {
@@ -571,23 +596,14 @@ void processFile(const fs::path& path, const robolina::case_preserve_replacer<ch
             // If we need to rename but there were no content changes, we need to explicitly rename the file
             if (needsRename && !hasChanges)
             {
-                try
+                if (fs::exists(newPath))
                 {
-                    if (fs::exists(newPath))
-                    {
-                        std::cerr << "Error: Cannot rename file, destination already exists: " << newPath << std::endl;
-                        return;
-                    }
-                    fs::rename(path, newPath);
-                    if (options.verbose)
-                    {
-                        std::cout << "Renamed file." << std::endl;
-                    }
+                    throw std::runtime_error("Cannot rename file, destination already exists: " + newPath.string());
                 }
-                catch (const fs::filesystem_error& e)
+                fs::rename(path, newPath);
+                if (options.verbose)
                 {
-                    std::cerr << "Error: Failed to rename file: " << e.what() << std::endl;
-                    return;
+                    std::cout << "Renamed file." << std::endl;
                 }
             }
         }
@@ -641,12 +657,43 @@ void processPath(const fs::path& path, const CommandLineOptions& options)
     }
     else
     {
-        std::cerr << "Warning: Path is neither a file nor a directory: " << path << std::endl;
+        throw std::runtime_error("Path is neither a file nor a directory: " + path.string());
     }
 }
 
 int main(int argc, char* argv[])
 {
+//#if defined(_MSC_VER) || defined(_WIN32)  || defined(_WIN64)
+//    // Set the encoding of the output to utf8 on Windows
+//    SetConsoleOutputCP(CP_UTF8);
+//
+//    std::vector<std::string> utf8Args;
+//    std::vector<std::vector<char>> utf8Buffers;
+//    {
+//        // Convert command line arguments to UTF-8 on Windows
+//        int wargc;
+//        wchar_t** wargv = CommandLineToArgvW(GetCommandLineW(), &wargc);
+//        if (wargv)
+//        {
+//            for (int i = 0; i < wargc; ++i)
+//            {
+//                int size_needed = WideCharToMultiByte(CP_UTF8, 0, wargv[i], -1, NULL, 0, NULL, NULL);
+//                std::vector<char> buffer(size_needed);
+//                WideCharToMultiByte(CP_UTF8, 0, wargv[i], -1, buffer.data(), size_needed, NULL, NULL);
+//                utf8Args.push_back(std::string(buffer.data()));
+//                utf8Buffers.push_back(std::move(buffer));
+//            }
+//            LocalFree(wargv);
+//            argc = static_cast<int>(utf8Args.size());
+//            std::vector<char*> utf8Argv;
+//            for (auto& buf : utf8Buffers)
+//            {
+//                utf8Argv.push_back(buf.data());
+//            }
+//            argv = utf8Argv.data();
+//    }
+//#endif
+
     try
     {
         CommandLineOptions options = parseCommandLine(argc, argv);

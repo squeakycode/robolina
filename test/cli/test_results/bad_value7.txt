@@ -1,0 +1,1 @@
+Error: Invalid match-whole-word ('true' or 'false' expected) in file, line 5: bad

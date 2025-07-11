@@ -60,7 +60,109 @@ $ROBOLINA_TOOL "$TEST_OUTPUT_DIR/test_verbose" "one two three" "four five six" -
 
 # Test 10: Replace with CString
 cp -R "$TEST_INPUT_DIR" "$TEST_OUTPUT_DIR/test_cstring"
-$ROBOLINA_TOOL "$TEST_OUTPUT_DIR/test_cstring" "\n" "a\nb\nc" --case-mode ignore --no-rename || { echo "Error: Failed to execute $ROBOLINA_TOOL for test_cstring"; exit 1; }
+$ROBOLINA_TOOL "$TEST_OUTPUT_DIR/test_cstring" "\n" "a\nb\nc" --case-mode ignore || { echo "Error: Failed to execute $ROBOLINA_TOOL for test_cstring"; exit 1; }
+
+# Test 11: Replace one file
+cp -R "$TEST_INPUT_DIR" "$TEST_OUTPUT_DIR/test_one_file"
+$ROBOLINA_TOOL "$TEST_OUTPUT_DIR/test_one_file/testfile1_OneTwoThree.txt" "one two three" "four five six" || { echo "Error: Failed to execute $ROBOLINA_TOOL for test_one_file"; exit 1; }
+
+# Test 12: Replace using replacements file and replacement arguments
+cp -R "$TEST_INPUT_DIR" "$TEST_OUTPUT_DIR/test_replacements_file_with_args"
+$ROBOLINA_TOOL "$TEST_OUTPUT_DIR/test_replacements_file_with_args" "kebab" "shish kebap" --replacements-file "replacements.txt" || { echo "Error: Failed to execute $ROBOLINA_TOOL for test_replacements_file_with_args"; exit 1; }
+
+# Test 13: Replace using replacements file and replacement arguments
+cp -R "$TEST_INPUT_DIR" "$TEST_OUTPUT_DIR/test_non_ascii_path_ä"
+$ROBOLINA_TOOL "$TEST_OUTPUT_DIR/test_non_ascii_path_ä" "one two three" "four five six" || { echo "Error: Failed to execute $ROBOLINA_TOOL for test_non_ascii_path_ä"; exit 1; }
+
+# Test Error: Missing required positional arguments
+$ROBOLINA_TOOL "$TEST_OUTPUT_DIR/dummy" "one two three" 2> "$TEST_OUTPUT_DIR/bad_missing_args1.txt"
+if [ $? -ne 1 ]; then
+    echo "Error: Expected exit code 1 for bad_missing_args1.txt, got $?"; exit 1;
+fi
+$ROBOLINA_TOOL "$TEST_OUTPUT_DIR/dummy" 2> "$TEST_OUTPUT_DIR/bad_missing_args2.txt"
+if [ $? -ne 1 ]; then
+    echo "Error: Expected exit code 1 for bad_missing_args2.txt, got $?"; exit 1;
+fi
+$ROBOLINA_TOOL 2> "$TEST_OUTPUT_DIR/bad_missing_args3.txt"
+if [ $? -ne 1 ]; then
+    echo "Error: Expected exit code 1 for bad_missing_args3.txt, got $?"; exit 1;
+fi
+$ROBOLINA_TOOL "$TEST_OUTPUT_DIR/dummy" "one two three" --replacements-file "replacements.txt" 2> "$TEST_OUTPUT_DIR/bad_missing_args4.txt"
+if [ $? -ne 1 ]; then
+    echo "Error: Expected exit code 1 for bad_missing_args4.txt, got $?"; exit 1;
+fi
+$ROBOLINA_TOOL --replacements-file "replacements.txt" 2> "$TEST_OUTPUT_DIR/bad_missing_args5.txt"
+if [ $? -ne 1 ]; then
+    echo "Error: Expected exit code 1 for bad_missing_args5.txt, got $?"; exit 1;
+fi
+
+# Test Error: Too many positional arguments
+$ROBOLINA_TOOL "$TEST_OUTPUT_DIR/dummy" "one two three" "four five six" "seven eight nine" 2> "$TEST_OUTPUT_DIR/bad_too_many_args1.txt"
+if [ $? -ne 1 ]; then
+    echo "Error: Expected exit code 1 for bad_too_many_args1.txt, got $?"; exit 1;
+fi
+
+# Test Error: Unknown option
+$ROBOLINA_TOOL "$TEST_OUTPUT_DIR/dummy" "one two three" "four five six" --lorum 2> "$TEST_OUTPUT_DIR/bad_unknown_args1.txt"
+if [ $? -ne 1 ]; then
+    echo "Error: Expected exit code 1 for bad_unknown_args1.txt, got $?"; exit 1;
+fi
+$ROBOLINA_TOOL "$TEST_OUTPUT_DIR/dummy" "one two three" "four five six" -lorum 2> "$TEST_OUTPUT_DIR/bad_unknown_args2.txt"
+if [ $? -ne 1 ]; then
+    echo "Error: Expected exit code 1 for bad_unknown_args2.txt, got $?"; exit 1;
+fi
+
+# Test Error: Missing value
+$ROBOLINA_TOOL "$TEST_OUTPUT_DIR/dummy" "one two three" "four five six" --case-mode 2> "$TEST_OUTPUT_DIR/bad_missing_value1.txt"
+if [ $? -ne 1 ]; then
+    echo "Error: Expected exit code 1 for bad_missing_value1.txt, got $?"; exit 1;
+fi
+$ROBOLINA_TOOL "$TEST_OUTPUT_DIR/dummy" "one two three" "four five six" --extensions 2> "$TEST_OUTPUT_DIR/bad_missing_value2.txt"
+if [ $? -ne 1 ]; then
+    echo "Error: Expected exit code 1 for bad_missing_value2.txt, got $?"; exit 1;
+fi
+$ROBOLINA_TOOL "$TEST_OUTPUT_DIR/dummy" "one two three" "four five six" --replacements-file 2> "$TEST_OUTPUT_DIR/bad_missing_value3.txt"
+if [ $? -ne 1 ]; then
+    echo "Error: Expected exit code 1 for bad_missing_value3.txt, got $?"; exit 1;
+fi
+
+# Test Error: Bad value
+$ROBOLINA_TOOL "$TEST_OUTPUT_DIR/dummy" "one two three" "four five six" --case-mode "kebab" 2> "$TEST_OUTPUT_DIR/bad_value1.txt"
+if [ $? -ne 1 ]; then
+    echo "Error: Expected exit code 1 for bad_value1.txt, got $?"; exit 1;
+fi
+$ROBOLINA_TOOL "$TEST_OUTPUT_DIR/dummy" "one two three" "four five six" --extensions "" 2> "$TEST_OUTPUT_DIR/bad_value2.txt"
+if [ $? -ne 1 ]; then
+    echo "Error: Expected exit code 1 for bad_value2.txt, got $?"; exit 1;
+fi
+$ROBOLINA_TOOL "$TEST_OUTPUT_DIR/dummy" "one two three" "four five six" --replacements-file "notthere" 2> "$TEST_OUTPUT_DIR/bad_value3.txt"
+if [ $? -ne 1 ]; then
+    echo "Error: Expected exit code 1 for bad_value3.txt, got $?"; exit 1;
+fi
+$ROBOLINA_TOOL "$TEST_OUTPUT_DIR/notthere" "one two three" "four five six" 2> "$TEST_OUTPUT_DIR/bad_value4.txt"
+if [ $? -ne 1 ]; then
+    echo "Error: Expected exit code 1 for bad_value4.txt, got $?"; exit 1;
+fi
+$ROBOLINA_TOOL "$TEST_OUTPUT_DIR/dummy" "" "four five six" 2> "$TEST_OUTPUT_DIR/bad_value5.txt"
+if [ $? -ne 1 ]; then
+    echo "Error: Expected exit code 1 for bad_value5.txt, got $?"; exit 1;
+fi
+$ROBOLINA_TOOL "$TEST_OUTPUT_DIR/test_default" "one two three" "four five six" --replacements-file "replacements_bad1.txt" 2> "$TEST_OUTPUT_DIR/bad_value6.txt"
+if [ $? -ne 1 ]; then
+    echo "Error: Expected exit code 1 for bad_value6.txt, got $?"; exit 1;
+fi
+$ROBOLINA_TOOL "$TEST_OUTPUT_DIR/test_default" "one two three" "four five six" --replacements-file "replacements_bad2.txt"  2> "$TEST_OUTPUT_DIR/bad_value7.txt"
+if [ $? -ne 1 ]; then
+    echo "Error: Expected exit code 1 for bad_value7.txt, got $?"; exit 1;
+fi
+$ROBOLINA_TOOL "$TEST_OUTPUT_DIR/test_default" "one two three" "four five six" --replacements-file "replacements_bad3.txt" 2> "$TEST_OUTPUT_DIR/bad_value8.txt"
+if [ $? -ne 1 ]; then
+    echo "Error: Expected exit code 1 for bad_value8.txt, got $?"; exit 1;
+fi
+$ROBOLINA_TOOL "$TEST_OUTPUT_DIR/test_default" "one two three" "four five six" --replacements-file "replacements_bad4.txt" 2> "$TEST_OUTPUT_DIR/bad_value9.txt"
+if [ $? -ne 1 ]; then
+    echo "Error: Expected exit code 1 for bad_value9.txt, got $?"; exit 1;
+fi
 
 # Print completion message
 echo "All CLI tests completed. Results are stored in $TEST_OUTPUT_DIR."
