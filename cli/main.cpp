@@ -580,11 +580,11 @@ void processFile(const fs::path& path, const robolina::case_preserve_replacer<ch
             {
                 if (options.dryRun)
                 {
-                    std::cout << "File would be renamed: " << toString(path) << " -> " << newPath.filename() << std::endl;
+                    std::cout << "File would be renamed: " << toString(path) << " -> " << toString(newPath.filename()) << std::endl;
                 }
                 else
                 {
-                    std::cout << "File will be renamed: " << toString(path) << " -> " << newPath.filename() << std::endl;
+                    std::cout << "File will be renamed: " << toString(path) << " -> " << toString(newPath.filename()) << std::endl;
                 }
                 if (fs::exists(newPath))
                 {

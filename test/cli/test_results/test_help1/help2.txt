@@ -1,4 +1,4 @@
-Robolina - v0.3.0 - Text find and replace tool with case preservation.
+Robolina - v1.0.1 - Text find and replace tool with case preservation.
 
 Usage: robolina [options] <path> <text-to-find> <replacement-text>
 
