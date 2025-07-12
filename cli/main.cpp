@@ -1,7 +1,7 @@
 // Robolina Replace Preserve Case
 // Link: https://github.com/squeakycode/robolina
 // Uses: https://github.com/squeakycode/cpptokenfinder
-// Version: 0.1.0
+//
 // Minimum required C++ Standard: C++17
 // License: BSD 3-Clause License
 //
@@ -456,7 +456,6 @@ bool shouldProcessFile(const fs::path& path, const std::vector<std::string>& cus
     return false;
 }
 
-// Add function to perform find and replace on filenames
 fs::path renameFileWithReplacement(const fs::path& originalPath, const robolina::case_preserve_replacer<char>& replacer)
 {
     // Get the parent path and filename

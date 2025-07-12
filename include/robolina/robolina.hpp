@@ -1,7 +1,7 @@
 // Robolina Replace Preserve Case
 // Link: https://github.com/squeakycode/robolina
 // Uses: https://github.com/squeakycode/cpptokenfinder
-// Version: 0.1.0
+// Version: 1.0.0
 // Minimum required C++ Standard: C++11
 // License: BSD 3-Clause License
 // 
