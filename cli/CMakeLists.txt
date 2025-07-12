@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 3.10)
-
 # Add the executable
 add_executable(robolina_cli
     main.cpp
@@ -16,3 +14,5 @@ install(TARGETS robolina_cli
     RUNTIME DESTINATION bin
     RENAME robolina
 )
+
+custom_target_use_highest_warning_level(robolina_cli)

@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 3.12)
-
 set(INJECTED_PROJECT_NAME "robolina")
 set(INJECTED_INPUT ${PROJECT_SOURCE_DIR}/include/robolina)
 set(INJECTED_EXCLUDE_SYMBOLS "")

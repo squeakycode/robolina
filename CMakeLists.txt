@@ -1,13 +1,11 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.15)
+cmake_policy(SET CMP0092 NEW) # no default /W3 flag for MSVC
 
 # We are building C++ Token Finder
 project(robolina CXX)
 
-if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.12)
-    cmake_policy(SET CMP0074 NEW) # The NEW behavior for this policy is to use <PackageName>_ROOT variables.
-endif()
-
-set (CMAKE_CXX_STANDARD 17) # Updated to C++17 for std::filesystem
+# Set the C++ standard to C++17
+set (CMAKE_CXX_STANDARD 17)
 
 # CLI tool version configuration
 set(ROBOLINA_CLI_VERSION_MAJOR 1)

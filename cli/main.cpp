@@ -42,6 +42,7 @@
 #include <stdexcept>
 #include <algorithm>
 #include <sstream>
+
 #if defined(_MSC_VER) || defined(_WIN32)  || defined(_WIN64)
 #define ROBOLINA_WINDOWS
 #endif
@@ -423,14 +424,14 @@ bool shouldProcessFile(const fs::path& path, const std::vector<std::string>& cus
 
     // Convert file_extension to lower case for case-insensitive comparison
     std::string file_extension_lower = file_extension;
-    std::transform(file_extension_lower.begin(), file_extension_lower.end(), file_extension_lower.begin(), ::tolower);
+    std::transform(file_extension_lower.begin(), file_extension_lower.end(), file_extension_lower.begin(), [](unsigned char c) { return static_cast<char>(::tolower(c)); });
 
     if (!customExtensions.empty())
     {
         for (const auto& ext : customExtensions)
         {
             std::string ext_lower = ext;
-            std::transform(ext_lower.begin(), ext_lower.end(), ext_lower.begin(), ::tolower);
+            std::transform(ext_lower.begin(), ext_lower.end(), ext_lower.begin(), [](unsigned char c) { return static_cast<char>(::tolower(c)); });
             if (file_extension_lower == ext_lower)
             {
                 return true;
