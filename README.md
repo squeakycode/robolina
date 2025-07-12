@@ -88,8 +88,11 @@ replacement-text=myValue
 
 ## Example Dry-Run Output
 ```
->robolina testdirectory "one two three" "hello world" --dry-run
+>robolina testdirectory "one two three" "hello world" --dry-run --recursive
 Performing dry run.
+File content would change: testdirectory\nestedtestdirectory\testfile4_one_two_three.txt
+File would be renamed: testdirectory\nestedtestdirectory\testfile4_one_two_three.txt -> "testfile4_hello_world.txt"
+No changes needed for file: testdirectory\nestedtestdirectory\testfile5.txt
 File content would change: testdirectory\testfile1_OneTwoThree.txt
 File would be renamed: testdirectory\testfile1_OneTwoThree.txt -> "testfile1_HelloWorld.txt"
 No changes needed for file: testdirectory\testfile2.txt
