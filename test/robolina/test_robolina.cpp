@@ -289,3 +289,16 @@ TEST_CASE("Name number mix 2", "[robolina]")
         REQUIRE(result == expected);
     }
 }
+
+TEST_CASE("Surrounding whitespace", "[robolina]")
+{
+    robolina::case_preserve_replacer<char> replacer;
+    replacer.add_replacement("  oneTwoThree  ", "five six seven", robolina::case_mode::preserve_case);
+
+    SECTION("First match should be processed") {
+        std::string input = "text one_two_three";
+        std::string expected = "text five_six_seven";
+        std::string result = replacer.find_and_replace(input);
+        REQUIRE(result == expected);
+    }
+}
