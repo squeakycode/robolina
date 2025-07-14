@@ -61,7 +61,7 @@ std::wstring convertToWideString(const std::string& str)
 inline std::string toString(const fs::path& path)
 {
     // for Windows, convert the path to a UTF-8 string
-    return { path.u8string().c_str() };
+    return { reinterpret_cast<const char*>(path.u8string().c_str()) };
 }
 #else
 inline std::string toString(const fs::path& path)
