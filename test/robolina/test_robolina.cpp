@@ -263,3 +263,29 @@ TEST_CASE("Overlapping finders 1", "[robolina]")
         REQUIRE(result == expected);
     }
 }
+
+TEST_CASE("Name number mix 1", "[robolina]")
+{
+    robolina::case_preserve_replacer<char> replacer;
+    replacer.add_replacement("one two 3 four", "five 6 seven", robolina::case_mode::preserve_case);
+
+    SECTION("First match should be processed") {
+        std::string input = "text one_two_3_four";
+        std::string expected = "text five_6_seven";
+        std::string result = replacer.find_and_replace(input);
+        REQUIRE(result == expected);
+    }
+}
+
+TEST_CASE("Name number mix 2", "[robolina]")
+{
+    robolina::case_preserve_replacer<char> replacer;
+    replacer.add_replacement("oneTwo3Four", "five 6 seven", robolina::case_mode::preserve_case);
+
+    SECTION("First match should be processed") {
+        std::string input = "text one_two3_four";
+        std::string expected = "text five_6_seven";
+        std::string result = replacer.find_and_replace(input);
+        REQUIRE(result == expected);
+    }
+}

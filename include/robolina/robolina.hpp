@@ -393,9 +393,9 @@ namespace robolina
                 }
                 else
                 {
-                    // Check for transition from lowercase to uppercase (camelCase boundary)
+                    // Check for transition from lowercase or digit to uppercase (camelCase boundary)
                     if (!current_word.empty() &&
-                        std::islower(static_cast<unsigned char>(*(p-1))) &&
+                        (std::islower(static_cast<unsigned char>(*(p-1))) || std::isdigit(static_cast<unsigned char>(*(p-1))))&&
                         std::isupper(static_cast<unsigned char>(*p)))
                     {
                         words.push_back(current_word);
