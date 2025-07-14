@@ -1,4 +1,4 @@
-Robolina - v1.0.1 - Text find and replace tool with case preservation.
+Robolina - v1.1.0 - Text find and replace tool with case preservation.
 
 Usage: robolina [options] <path> <text-to-find> <replacement-text>
 
@@ -32,6 +32,9 @@ case-mode=preserve
 # valid values are true, false.match-whole-word=false
 text-to-find=foo bar
 replacement-text=baz_qux
+# shorter syntax using text-to-find-->replacement-text pairs
+pair=value3-->myValue3
+value4-->myValue4
 # Empty lines are ignored.
 
 case-mode=ignore

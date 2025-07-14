@@ -74,6 +74,10 @@ $ROBOLINA_TOOL "$TEST_OUTPUT_DIR/test_replacements_file_with_args" "kebab" "shis
 cp -R "$TEST_INPUT_DIR" "$TEST_OUTPUT_DIR/test_non_ascii_path_ä"
 $ROBOLINA_TOOL "$TEST_OUTPUT_DIR/test_non_ascii_path_ä" "one two three" "four five six" || { echo "Error: Failed to execute $ROBOLINA_TOOL for test_non_ascii_path_ä"; exit 1; }
 
+# Test 14: Replace using replacements file with short syntax
+cp -R "$TEST_INPUT_DIR" "$TEST_OUTPUT_DIR/test_replacements_file_short_syntax"
+$ROBOLINA_TOOL "$TEST_OUTPUT_DIR/test_replacements_file_short_syntax" --replacements-file "replacements_short_syntax.txt" || { echo "Error: Failed to execute $ROBOLINA_TOOL for test_replacements_file_short_syntax"; exit 1; }
+
 # Test Error: Missing required positional arguments
 $ROBOLINA_TOOL "$TEST_OUTPUT_DIR/dummy" "one two three" 2> "$TEST_OUTPUT_DIR/bad_missing_args1.txt"
 if [ $? -ne 1 ]; then
@@ -162,6 +166,10 @@ fi
 $ROBOLINA_TOOL "$TEST_OUTPUT_DIR/test_default" "one two three" "four five six" --replacements-file "replacements_bad4.txt" 2> "$TEST_OUTPUT_DIR/bad_value9.txt"
 if [ $? -ne 1 ]; then
     echo "Error: Expected exit code 1 for bad_value9.txt, got $?"; exit 1;
+fi
+$ROBOLINA_TOOL "$TEST_OUTPUT_DIR/test_default" "one two three" "four five six" --replacements-file "replacements_bad5.txt" 2> "$TEST_OUTPUT_DIR/bad_value10.txt"
+if [ $? -ne 1 ]; then
+    echo "Error: Expected exit code 1 for bad_value10.txt, got $?"; exit 1;
 fi
 
 # Print completion message

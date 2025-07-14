@@ -129,6 +129,9 @@ void printUsage()
               << "match-whole-word=false" << std::endl
               << "text-to-find=foo bar" << std::endl
               << "replacement-text=baz_qux" << std::endl
+              << "# shorter syntax using text-to-find-->replacement-text pairs" << std::endl
+              << "pair=value3-->myValue3" << std::endl
+              << "value4-->myValue4" << std::endl
               << "# Empty lines are ignored." << std::endl
               << std::endl
               << "case-mode=ignore" << std::endl
@@ -253,6 +256,19 @@ void loadOptionsFromFile(const std::string& filePath, std::vector<ReplacementOpt
                     throw std::runtime_error("Invalid case mode in file, line " + std::to_string(lineCount) + ": " + value);
                 }
             }
+            else if (key == "pair")
+            {
+                size_t delimiterPos = value.find("-->");
+                if (delimiterPos == std::string::npos)
+                {
+                    throw std::runtime_error("Invalid replace syntax in file, line " + std::to_string(lineCount) + ": " + value);
+                }
+
+                currentOptions.textToFind = value.substr(0, delimiterPos);
+                currentOptions.replacementText = value.substr(delimiterPos + 3); // Skip the --> delimiter
+                textToFindSet = true;
+                replacementTextSet = true;
+            }
             else
             {
                 throw std::runtime_error("Unknown name in file, line " + std::to_string(lineCount) + ": " + key);
@@ -260,7 +276,16 @@ void loadOptionsFromFile(const std::string& filePath, std::vector<ReplacementOpt
         }
         else
         {
-            throw std::runtime_error("Bad syntax in file, line " + std::to_string(lineCount));
+            size_t delimiterPos = line.find("-->");
+            if (delimiterPos == std::string::npos)
+            {
+                throw std::runtime_error("Bad syntax in file, line " + std::to_string(lineCount));
+            }
+
+            currentOptions.textToFind = line.substr(0, delimiterPos);
+            currentOptions.replacementText = line.substr(delimiterPos + 3); // Skip the --> delimiter
+            textToFindSet = true;
+            replacementTextSet = true;
         }
 
         // Add currentOptions to the list if all required fields are set

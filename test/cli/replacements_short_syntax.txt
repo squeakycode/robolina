@@ -1,0 +1,8 @@
+case-mode=preserve
+match-whole-word=false
+one-two-three-->hello world
+
+case-mode=ignore
+match-whole-word=true
+pair=text-->texxt
+case-->was_case

@@ -79,6 +79,10 @@ xcopy /E /I /Q "%TEST_INPUT_DIR%" "%TEST_OUTPUT_DIR%\test_non_ascii_path_ä"
 REM chcp 1252
 %ROBOLINA_TOOL% "%TEST_OUTPUT_DIR%\test_non_ascii_path_ä" "one two three" "four five six" || goto :error
 
+REM Test 14: Replace using replacements file with short syntax
+xcopy /E /I /Q "%TEST_INPUT_DIR%" "%TEST_OUTPUT_DIR%\test_replacements_file_short_syntax"
+%ROBOLINA_TOOL% "%TEST_OUTPUT_DIR%\test_replacements_file_short_syntax" --replacements-file "replacements_short_syntax.txt" || goto :error
+
 REM Test Error: Missing required positional arguments
 %ROBOLINA_TOOL% "%TEST_OUTPUT_DIR%\dummy" "one two three" 2> "%TEST_OUTPUT_DIR%\bad_missing_args1.txt"
 IF NOT ERRORLEVEL 1 (
@@ -186,6 +190,12 @@ IF NOT ERRORLEVEL 1 (
 %ROBOLINA_TOOL% "%TEST_OUTPUT_DIR%\test_default" "one two three" "four five six" --replacements-file "replacements_bad4.txt" 2> "%TEST_OUTPUT_DIR%\bad_value9.txt"
 IF NOT ERRORLEVEL 1 (
     echo Error: Expected exit code 1 for bad_value9.txt, got: %ERRORLEVEL%
+    exit /b 1
+)
+
+%ROBOLINA_TOOL% "%TEST_OUTPUT_DIR%\test_default" "one two three" "four five six" --replacements-file "replacements_bad5.txt" 2> "%TEST_OUTPUT_DIR%\bad_value10.txt"
+IF NOT ERRORLEVEL 1 (
+    echo Error: Expected exit code 1 for bad_value10.txt, got: %ERRORLEVEL%
     exit /b 1
 )
 

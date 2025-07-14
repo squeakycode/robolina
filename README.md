@@ -76,6 +76,9 @@ case-mode=preserve
 # valid values are true, false.match-whole-word=false
 text-to-find=foo bar
 replacement-text=baz_qux
+# shorter syntax using text-to-find-->replacement-text pairs
+pair=value3-->myValue3
+value4-->myValue4
 # Empty lines are ignored.
 
 case-mode=ignore
